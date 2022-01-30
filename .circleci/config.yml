@@ -17,7 +17,7 @@ commands:
 jobs:
   deploy-ecr-infrastructure:
     docker:
-      -image: amazon/aws-cli
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
@@ -32,17 +32,17 @@ jobs:
 
   upload-docker:
     docker:
-      -image: amazon/aws-cli
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Run docker
           command: |
-            .\run_docker.sh
+            .\backend\run_docker.sh
       - run:
           name: Upload docker to aws
           command: |
-            .\upload_docker.sh
+            .\backend\upload_docker.sh
 
   deploy-infrastructure:
     docker:

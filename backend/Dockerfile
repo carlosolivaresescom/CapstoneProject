@@ -6,8 +6,6 @@ COPY package*.json ./
 RUN npm install
 COPY . . 
 
-RUN pip install -r requirements.txt
-
 EXPOSE 80
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "startlinux"]
