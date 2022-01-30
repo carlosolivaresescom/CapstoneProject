@@ -54,11 +54,6 @@ jobs:
             docker build -t capstoneproject .
             docker images
       - run:
-          name: Run docker
-          command: |
-            cd backend
-            docker run -i -p 80:80 capstoneproject
-      - run:
           name: Tag docker image
           command: |
             cd backend
