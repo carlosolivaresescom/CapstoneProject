@@ -84,6 +84,6 @@ workflows:
               only: main
       - upload-docker:
           filters:
-            requires: [deploy-ecr-infrastructure]
             branches:
               only: main
+          requires: [deploy-ecr-infrastructure]
