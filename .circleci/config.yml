@@ -36,10 +36,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install dependencies
+          command: |
+            yum -y update
+            yum install -y ruby
+      - run:
           name: Run docker
           command: |
             cd backend
-            .\run_docker.sh
+            ./run_docker.sh
       - run:
           name: Tag docker image
           command: |
