@@ -11,9 +11,39 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environments ${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name capstone-network-${CIRCLE_WORKFLOW_ID:0:7}
 
 jobs:
+  deploy-ecr-infrastructure:
+    docker:
+      -image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Deploy ecr
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/ecr.yml \
+              --tags project=capstone \
+              --stack-name "capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --region=us-east-1
+            exit 1
+
+  upload-docker:
+    docker:
+      -image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Run docker
+          command: |
+            .\run_docker.sh
+      - run:
+          name: Upload docker to aws
+          command: |
+            .\upload_docker.sh
+
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -28,7 +58,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/network.yml \
-              --tags project=udapeople \
+              --tags project=capstone \
               --stack-name "capstone-network-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides EnvironmentName="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region=us-east-1
@@ -38,7 +68,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-infrastructure:
+      - deploy-ecr-infrastructure:
           filters:
             branches:
               only: main

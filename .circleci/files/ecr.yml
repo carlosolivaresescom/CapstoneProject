@@ -1,0 +1,15 @@
+Description: >
+  Carlos / Udacity Project
+
+Resources:
+  ECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "ecr-repository"
+
+Outputs:
+  ECR:
+    Description: A reference to the created ECR
+    Value: !GetAtt ECR.RepositoryUri
+    Export:
+      Name: ECR-Uri
