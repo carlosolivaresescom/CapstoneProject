@@ -44,6 +44,7 @@ jobs:
           name: Run docker
           command: |
             cd backend
+            chmod +x ./run_docker.sh
             ./run_docker.sh
       - run:
           name: Tag docker image
