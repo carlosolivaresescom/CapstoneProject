@@ -38,13 +38,15 @@ jobs:
       - run:
           name: Run docker
           command: |
-            .\backend\run_docker.sh
+            cd backend
+            .\run_docker.sh
       - run:
           name: Tag docker image
           command: |
+            cd backend
             export ECR-URI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            docker tag capstoneproject ${ECR-URI}/ecr-repository:latest
-            docker push ${ECR-URI}/ecr-repository:latest
+            docker tag capstoneproject ${ECR-URI}/${CIRCLE_WORKFLOW_ID:0:7}-ecr-repository:latest
+            docker push ${ECR-URI}/${CIRCLE_WORKFLOW_ID:0:7}-ecr-repository:latest
             exit 1
 
   deploy-infrastructure:

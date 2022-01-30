@@ -10,7 +10,7 @@ Resources:
   ECR:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: "ecr-repository"
+      RepositoryName: !Sub "${ID}-ecr-repository"
 
 Outputs:
   ECR:
