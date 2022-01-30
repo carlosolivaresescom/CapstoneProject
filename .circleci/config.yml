@@ -75,3 +75,7 @@ workflows:
           filters:
             branches:
               only: main
+      - upload-docker:
+          filters:
+            branches:
+              only: main
