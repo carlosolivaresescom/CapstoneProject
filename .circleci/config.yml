@@ -28,7 +28,6 @@ jobs:
               --tags project=capstone \
               --stack-name "capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}" \
               --region=us-east-1
-            exit 1
 
   upload-docker:
     docker:
@@ -40,9 +39,12 @@ jobs:
           command: |
             .\backend\run_docker.sh
       - run:
-          name: Upload docker to aws
+          name: Tag docker image
           command: |
-            .\backend\upload_docker.sh
+            export ECR-URI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
+            docker tag capstoneproject ${ECR-URI}/ecr-repository:latest
+            docker push ${ECR-URI}/ecr-repository:latest
+            exit 1
 
   deploy-infrastructure:
     docker:
@@ -60,7 +62,7 @@ jobs:
               --template-file .circleci/files/network.yml \
               --tags project=capstone \
               --stack-name "capstone-network-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides EnvironmentName="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region=us-east-1
             exit 1
       - destroy-environment

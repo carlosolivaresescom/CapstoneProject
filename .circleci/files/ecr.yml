@@ -1,6 +1,11 @@
 Description: >
   Carlos / Udacity Project
 
+Parameters:
+  ID:
+    Description: Unique identifier.
+    Type: String
+
 Resources:
   ECR:
     Type: AWS::ECR::Repository
@@ -12,4 +17,4 @@ Outputs:
     Description: A reference to the created ECR
     Value: !GetAtt ECR.RepositoryUri
     Export:
-      Name: ECR-Uri
+      Name: !Sub "${ID}-ECR-Uri"
