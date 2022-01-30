@@ -32,16 +32,20 @@ jobs:
 
   upload-docker:
     docker:
-      - image: amazon/aws-cli
+      - image: docker:18.09-git
     steps:
       - checkout
       - run:
           name: install dependencies
           command: |
-            yum -y update
-            yum install -y ruby
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install \
+                awscli \
+            && rm -rf /var/cache/apk/*
       - setup_remote_docker:
-          version: 20.10.11
           docker_layer_caching: true
       - run:
           name: Build docker
