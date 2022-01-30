@@ -40,6 +40,9 @@ jobs:
           command: |
             yum -y update
             yum install -y ruby
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true
       - run:
           name: Run docker
           command: |
