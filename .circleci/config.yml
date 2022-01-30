@@ -58,11 +58,12 @@ jobs:
           command: |
             cd backend
             export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
+            aws ecr get-login
             echo "$ECRURI"
             echo ${ECRURI}:latest
             docker tag capstoneproject ${ECRURI}:latest
             docker images
-            docker push '${ECRURI}':latest
+            docker push ${ECRURI}:latest
             exit 1
 
   deploy-infrastructure:
