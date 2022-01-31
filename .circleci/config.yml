@@ -139,7 +139,7 @@ jobs:
       - run:
           name: Create cluster
           command: |
-            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" --nodes-min=1 --nodes-max=8 --node-type=t3.medium
+            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" --nodes-min=1 --nodes-max=8 --node-type=t3.medium --region us-east-1f
       - run:
           name: Get pods
           command: |
