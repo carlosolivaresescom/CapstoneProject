@@ -13,6 +13,16 @@
     remote_src: yes
     mode: "0777"
 
+- name: install aws
+  shell: |
+    apk add --no-cache \
+    python3 \
+    py3-pip \
+    && pip3 install --upgrade pip \
+    && pip3 install \
+        awscli \
+    && rm -rf /var/cache/apk/*
+
 - name: create cluster
   shell: |
     aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile user2 && aws configure set --profile user2 && aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile user2 && aws configure set region "$AWS_DEFAULT_REGION" --profile user2 && aws configure set output "text" --profile user2
