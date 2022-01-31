@@ -19,7 +19,7 @@
 
 - name: install python2
   shell: |
-    python3 install --upgrade pip
+    python3 -m ensurepip --upgrade
 
 - name: install python2
   shell: |
