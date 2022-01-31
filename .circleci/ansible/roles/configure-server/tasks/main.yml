@@ -15,7 +15,7 @@
 
 - name: install python
   shell: |
-    python3 get-pip.py
+    apt install -y python3
 
 - name: install aws
   shell: |
