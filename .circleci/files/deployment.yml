@@ -4,26 +4,26 @@ kind: Deployment
 metadata:
   name: kubeapp-ecr
   labels:
-   app: kubeapp-ecr
+    app: kubeapp-ecr
 spec:
-    replicas: 1
-    selector:
-      matchLabels:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeapp-ecr
+  template:
+    metadata:
+      labels:
         app: kubeapp-ecr
-    template:
-      metadata:
-        labels:
-          app: kubeapp-ecr
-      spec:
-        containers:
-          - name: kubeapp-ecr
-            image: $(uri)
-            resources:
-              requests:
+    spec:
+      containers:
+        - name: kubeapp-ecr
+          image: $(uri)
+          resources:
+            requests:
               memory: "128Mi"
               cpu: "500m"
-              limits:
+            limits:
               memory: "256Mi"
               cpu: "1000m"
-            ports:
-              - containerPort: 80
+          ports:
+            - containerPort: 80
