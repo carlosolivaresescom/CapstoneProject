@@ -15,7 +15,6 @@
 
 - name: install aws
   shell: |
-    apk add --no-cache \
     python3 \
     py3-pip \
     && pip3 install --upgrade pip \
