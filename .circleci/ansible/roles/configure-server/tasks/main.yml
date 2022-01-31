@@ -15,6 +15,7 @@
 
 - name: create cluster
   shell: |
+    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile user2 && aws configure set --profile user2 && aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile user2 && aws configure set region "$AWS_DEFAULT_REGION" --profile user2 && aws configure set output "text" --profile user2
     eksctl create cluster \
     --name capstone-cluster \
     --region us-east-1 \
