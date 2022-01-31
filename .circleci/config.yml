@@ -139,7 +139,7 @@ jobs:
       - run:
           name: Create cluster
           command: |
-            export clustername="C${CIRCLE_WORKFLOW_ID:0:7}"
+            export clustername="capstone-${CIRCLE_WORKFLOW_ID:0:7}"
             echo ${clustername}
             sed -e "s/clustername/$clustername/g" .circleci/files/create.yml | eksctl create cluster -f -
             #eksctl create cluster -f .circleci/files/create.yml
