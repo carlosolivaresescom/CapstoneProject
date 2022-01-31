@@ -17,6 +17,14 @@
   shell: |
     apt install -y python3
 
+- name: install python2
+  shell: |
+    python3 install --upgrade pip
+
+- name: install python2
+  shell: |
+    python3 install awscli
+
 - name: install aws
   shell: |
     pip3 install --upgrade pip \
