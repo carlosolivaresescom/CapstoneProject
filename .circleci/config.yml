@@ -58,7 +58,7 @@ jobs:
           command: |
             cd backend
             export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            export registry=${${ECRURI}%/*}
+            export registry=${$ECRURI%/*}
             echo "$registry"
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${registry}
             export test=$(aws ecr get-login)
