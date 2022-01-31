@@ -159,15 +159,15 @@ jobs:
 workflows:
   default:
     jobs:
-      #- deploy-ecr-infrastructure:
-      #    filters:
-      #      branches:
-      #        only: main
-      #- upload-docker:
-      #    filters:
-      #      branches:
-      #        only: main
-      #    requires: [deploy-ecr-infrastructure]
+      - deploy-ecr-infrastructure:
+          filters:
+            branches:
+              only: main
+      - upload-docker:
+          filters:
+            branches:
+              only: main
+          requires: [deploy-ecr-infrastructure]
       #- deploy-infrastructure:
       #    filters:
       #      branches:
@@ -182,3 +182,4 @@ workflows:
           filters:
             branches:
               only: main
+          requires: [upload-docker]
