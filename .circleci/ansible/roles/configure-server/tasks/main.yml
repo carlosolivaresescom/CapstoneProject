@@ -13,6 +13,10 @@
     remote_src: yes
     mode: "0777"
 
+- name: install python
+  shell: |
+    sudo apt install python3-pip
+
 - name: install aws
   shell: |
     pip3 install --upgrade pip \
