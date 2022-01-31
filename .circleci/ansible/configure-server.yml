@@ -22,5 +22,12 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3) || apk add bash
       changed_when: false
 
+    - name: Loading environment variables
+      tags: always
+      set_fact:
+        AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+        AWS_DEFAULT_REGION: "{{ lookup('env','AWS_DEFAULT_REGION') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+
   roles:
     - configure-server
