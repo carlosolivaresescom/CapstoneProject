@@ -15,7 +15,7 @@
 
 - name: install python
   shell: |
-    pip install awscli
+    python3 get-pip.py
 
 - name: install aws
   shell: |
