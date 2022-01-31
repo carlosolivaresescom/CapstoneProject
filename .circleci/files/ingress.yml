@@ -29,13 +29,13 @@ metadata:
 spec:
   rules:
     - http:
-      paths:
-        #- path: /* # SSL Redirect Setting
-        #backend:
-        #serviceName: ssl-redirect
-        #servicePort: use-annotation
-        - path: /*
-          backend:
-          serviceName: kubeapp-ecr-nodeport-service
-          servicePort: 80
+        paths:
+          #- path: /* # SSL Redirect Setting
+          #backend:
+          #serviceName: ssl-redirect
+          #servicePort: use-annotation
+          - path: /*
+            backend:
+              serviceName: kubeapp-ecr-nodeport-service
+              servicePort: 80
 # Important Note-1: In path based routing order is very important, if we are going to use  "/*", try to use it at the end of all rules.
