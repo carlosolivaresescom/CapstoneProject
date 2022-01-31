@@ -126,6 +126,39 @@ jobs:
             exit 1
           environment:
             ANSIBLE_HOST_KEY_CHECKING: false
+            AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+            AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      - destroy-environment
+
+  test:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            ["72:72:47:81:43:60:4c:c2:67:48:78:00:ef:84:b4:31:4d:19:8a:ae"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            apk add --no-cache tar
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install \
+                awscli \
+            && rm -rf /var/cache/apk/*
+      - run:
+          name: Configure server
+          command: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C
+            sudo mv /tmp/eksctl /usr/local/bin
+            eksctl version
       - destroy-environment
 
 workflows:
