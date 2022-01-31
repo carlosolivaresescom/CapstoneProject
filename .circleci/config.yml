@@ -58,7 +58,7 @@ jobs:
           command: |
             cd backend
             export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            aws ecr get-login-password --region us-east-1 | docker login --username udacity_deploy --password-stdin
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin
             export test=$(aws ecr get-login)
             echo "$test"
             echo "$ECRURI"
