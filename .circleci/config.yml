@@ -28,7 +28,7 @@ jobs:
               --tags project=capstone \
               --stack-name "capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --region=us-east-1
+              --region=us-east-2
 
   upload-docker:
     docker:
@@ -60,7 +60,7 @@ jobs:
             export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
             export registry=${ECRURI%/*}
             echo ${registry}
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${registry}
+            aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${registry}
             echo ${ECRURI}:latest
             docker tag capstoneproject ${ECRURI}:latest
             docker images
@@ -139,7 +139,7 @@ jobs:
       - run:
           name: Create cluster
           command: |
-            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" --nodes-min=1 --nodes-max=8 --node-type=t3.medium
+            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" --nodes-min=1 --nodes-max=8 --node-type=t3.medium --region=us-east-2
       - run:
           name: Get pods
           command: |
