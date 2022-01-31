@@ -153,9 +153,13 @@ jobs:
             export uri=${ECRURI}:latest
             echo ${ECRURI}:latest
             echo ${uri}
-            kubectl run capstoneproject --image=${uri} --port=80
-            kubectl get pods
-            kubectl get deployments -o wide
+            kubectl apply -f .circleci/files/deployment.yml
+            kubectl get deploy
+            kubectl apply -f .circleci/files/ecrserver.yml
+            kubectl get svc
+            kubectl apply -f .circleci/files/ingress.yml
+            kubectl get ingress
+            kubectl get po
 
       - destroy-environment
 
