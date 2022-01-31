@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: kubeapp-ecr
-          image: $(uri)
+          image: uriimage
           resources:
             requests:
               memory: "128Mi"
@@ -27,3 +27,5 @@ spec:
               cpu: "1000m"
           ports:
             - containerPort: 80
+          command: ["/bin/sh"]
+          args: ["-c", "npm run startlinux"]
