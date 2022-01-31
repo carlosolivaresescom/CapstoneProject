@@ -1,0 +1,14 @@
+[
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "CarlosProject"
+	},
+	{
+		"ParameterKey": "ImageId",
+		"ParameterValue": "ami-0e472ba40eb589f49"
+	},
+	{
+		"ParameterKey": "Volume",
+		"ParameterValue": "10"
+	}
+]
