@@ -15,7 +15,7 @@
 
 - name: install python
   shell: |
-    sudo apt install python3-pip
+    python3 install awscli
 
 - name: install aws
   shell: |
