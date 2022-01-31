@@ -131,34 +131,15 @@ jobs:
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
       - destroy-environment
 
-  test:
+  create-cluster:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: alpine/k8s:1.15.12
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            ["72:72:47:81:43:60:4c:c2:67:48:78:00:ef:84:b4:31:4d:19:8a:ae"]
-      - attach_workspace:
-          at: ~/
       - run:
-          name: Install dependencies
+          name: Create cluster
           command: |
-            apk add --update ansible
-            apk add --no-cache tar
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-                awscli \
-            && rm -rf /var/cache/apk/*
-      - run:
-          name: Configure server
-          command: |
-            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C
-            sudo mv /tmp/eksctl /usr/local/bin
-            eksctl version
+            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" --nodes-min=6 --nodes-max=8 --node-type=t3.medium
       - destroy-environment
 
 workflows:
@@ -173,13 +154,17 @@ workflows:
       #      branches:
       #        only: main
       #    requires: [deploy-ecr-infrastructure]
-      - deploy-infrastructure:
+      #- deploy-infrastructure:
+      #    filters:
+      #      branches:
+      #        only: main
+      #requires: [upload-docker]
+      #- configure-infrastructure:
+      #    filters:
+      #      branches:
+      #        only: main
+      #    requires: [deploy-infrastructure]
+      - create-cluster:
           filters:
             branches:
               only: main
-          #requires: [upload-docker]
-      - configure-infrastructure:
-          filters:
-            branches:
-              only: main
-          requires: [deploy-infrastructure]
