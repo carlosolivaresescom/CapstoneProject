@@ -1,7 +1,7 @@
 ---
 - name: "install node exporter."
   unarchive:
-    src: https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz
+    src: https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz
     dest: /tmp
     remote_src: yes
 
