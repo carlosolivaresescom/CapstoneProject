@@ -150,7 +150,10 @@ jobs:
           name: Run kubectl
           command: |
             export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            kubectl run capstoneproject --image=${ECRURI}:latest --port=80
+            export uri=${ECRURI}:latest
+            echo ${ECRURI}:latest
+            echo ${uri}
+            kubectl run capstoneproject --image=${uri} --port=80
       - destroy-environment
 
 workflows:
