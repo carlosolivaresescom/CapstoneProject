@@ -269,14 +269,16 @@ workflows:
       - build:
           filters:
             branches:
-              - main
-              - createcluster
+              only:
+                - main
+                - createcluster
           requires: [eslint]
       - upload_docker_image:
           filters:
             branches:
-              - main
-              - createcluster
+              only:
+                - main
+                - createcluster
           requires: [build]
       - create-cluster:
           filters:
