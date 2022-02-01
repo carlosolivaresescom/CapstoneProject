@@ -213,4 +213,4 @@ workflows:
           filters:
             branches:
               only: main
-          requires: [upload_docker_image]
+          requires: [restart-cluster]
