@@ -8,13 +8,13 @@ Parameters:
 
 Resources:
   ECR:
-    Type: AWS::ECR::PublicRepository
+    Type: AWS::ECR::Repository
     Properties:
       RepositoryName: !Sub "${ID}-ecr-repository"
 
 Outputs:
   ECR:
     Description: A reference to the created ECR
-    Value: !GetAtt ECR.Arn
+    Value: !GetAtt ECR.RepositoryUri
     Export:
       Name: !Sub "${ID}-ECR-Uri"

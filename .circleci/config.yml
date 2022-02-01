@@ -162,18 +162,34 @@ jobs:
 
       - destroy-environment
 
+  test:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: build images
+          command: |
+            cd backend
+            docker build -t capstoneproject .
+            docker images
+      - run:
+          name: push to docker hub
+          command: |
+            docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+            docker push carlosolivares9/capstone
+
 workflows:
   default:
     jobs:
-      - deploy-ecr-infrastructure:
-          filters:
-            branches:
-              only: main
-      - upload-docker:
-          filters:
-            branches:
-              only: main
-          requires: [deploy-ecr-infrastructure]
+      #- deploy-ecr-infrastructure:
+      #    filters:
+      #      branches:
+      #        only: main
+      #- upload-docker:
+      #    filters:
+      #      branches:
+      #        only: main
+      #    requires: [deploy-ecr-infrastructure]
       #- deploy-infrastructure:
       #    filters:
       #      branches:
@@ -184,8 +200,12 @@ workflows:
       #      branches:
       #        only: main
       #    requires: [deploy-infrastructure]
-      - create-cluster:
+      #- create-cluster:
+      #    filters:
+      #      branches:
+      #        only: main
+      #    requires: [upload-docker]
+      - test:
           filters:
             branches:
               only: main
-          requires: [upload-docker]
