@@ -177,6 +177,7 @@ jobs:
             mkdir -p ~/.local/bin/aws
             ./aws/install -i ~/.local/bin/aws
             PATH=$PATH:~/.local/bin/aws
+            /usr/local/bin/aws --version
             aws eks list-clusters
 
             curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
