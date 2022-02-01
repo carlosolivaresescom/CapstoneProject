@@ -173,14 +173,14 @@ jobs:
             device-mapper-persistent-data \
             lvm2 
             # it will setup repo list for you!
-            sudo yum-config-manager \
+            yum-config-manager \
             --add-repo \
             https://download.docker.com/linux/centos/docker-ce.repo
             # Make sure that you have stable one always
-            sudo yum-config-manager --enable docker-ce-edge
+            yum-config-manager --enable docker-ce-edge
 
             # And Finally install it
-            sudo yum install docker-ce
+            yum install docker-ce
             docker --version
             aws eks list-clusters
             cat \<<EOF | tee /etc/yum.repos.d/kubernetes.repo
