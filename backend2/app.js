@@ -17,6 +17,6 @@ app.use(cors(corsOptions))
 
 
 app.use('/home',(req,res) => { res.sendFile(path.join(__dirname+'/src/html/index.html')); })
-app.use('/', (req, res) => { res.send(`Force fail`);})
+app.use('/', (req, res) => { res.send(`Success`);})
 
 app.listen(port,host, () => { console.log(`Server listening on port ${port} in the host ${host}`); })
