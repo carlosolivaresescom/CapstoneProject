@@ -109,6 +109,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: store cluster name
+          command: |
+            export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
+            echo ${cluster}
+      - run:
+          name: Restart deployment
+          command: |
+            aws eks update-kubeconfig --name ${cluster}
+            export KUBECONFIG=/root/.kube/config
+      - run:
           name: Restart deployment
           command: |
             kubectl get svc --all-namespaces
