@@ -140,8 +140,6 @@ jobs:
     machine: true
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Smoke test.
           command: |
@@ -168,10 +166,12 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Smoke test.
           command: |
-            docker --version
+            docker images
       - run:
           name: Smoke test.
           command: |
