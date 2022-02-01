@@ -169,6 +169,7 @@ jobs:
       - run:
           name: Smoke test.
           command: |
+            docker --version
             aws eks list-clusters
             cat \<<EOF | tee /etc/yum.repos.d/kubernetes.repo
             [kubernetes]
