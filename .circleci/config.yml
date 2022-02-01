@@ -218,8 +218,7 @@ jobs:
       - destroy-cluster
 
   smoke-test:
-    docker:
-      - image: python:3.7-alpine3.11
+    machine: true
     steps:
       - checkout
       - setup_remote_docker:
