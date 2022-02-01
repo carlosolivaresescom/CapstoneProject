@@ -10,6 +10,9 @@ nodeGroups:
     instanceType: t3.medium
     desiredCapacity: 1
     volumeSize: 10
+    ssh: # Using existing EC2 Key pair
+      allow: true
+      publicKeyName: udacity
     iam:
       withAddonPolicies:
         imageBuilder: true
