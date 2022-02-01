@@ -22,9 +22,9 @@ commands:
           when: on_fail
           command: |
             echo "Reverting docker image"
-            sudo apt-get install docker-engine -y
-            sudo service docker start
-            sudo docker run hello-world
+            apt-get install docker-engine -y
+            service docker start
+            docker run hello-world
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
             docker pull ${DOCKER_USER}/capstoneproject:old
             docker tag ${DOCKER_USER}/capstoneproject:old ${DOCKER_USER}/capstoneproject:latest
