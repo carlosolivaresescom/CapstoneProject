@@ -22,10 +22,6 @@ commands:
           when: on_fail
           command: |
             echo "Reverting docker image"
-            apk add docker
-            apk update && apk add --no-cache docker-cli
-            /sbin/rc-update add docker default
-            /etc/init.d/docker start
             docker run hello-world
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
             docker pull ${DOCKER_USER}/capstoneproject:old
