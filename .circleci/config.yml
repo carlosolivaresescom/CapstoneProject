@@ -210,7 +210,7 @@ jobs:
       - run:
           name: build images
           command: |
-            cd backend
+            cd backend2
             docker build -t capstoneproject .
             docker images
       - run:

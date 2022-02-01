@@ -1,24 +1,27 @@
 #01-ECR-Nginx-Deployment.yml
-apiVersion: apps/v1
+apiVersion: v1
 kind: Deployment
 metadata:
-  name: kubeapp-ecr
+  name: kubeapp-ecr-deploy
   labels:
+    name: kubeapp-ecr-deploy
     app: kubeapp-ecr
 spec:
   replicas: 1
   selector:
     matchLabels:
+      name: kubeapp-ecr-pod
       app: kubeapp-ecr
   template:
     metadata:
+      name: kubeapp-ecr-pod
       labels:
+        name: kubeapp-ecr-pod
         app: kubeapp-ecr
     spec:
       containers:
-        - name: kubeapp-ecr
+        - name: kubeapp-ecr-container
           image: carlosolivares9/capstoneproject:latest
-          imagePullPolicy: Always
           resources:
             requests:
               memory: "128Mi"
@@ -28,7 +31,7 @@ spec:
               cpu: "1000m"
           livenessProbe:
             httpGet:
-              path: /
-              port: 80
+              path: /healthcheck
+              port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5

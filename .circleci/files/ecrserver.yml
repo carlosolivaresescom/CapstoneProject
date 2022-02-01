@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: kubeapp-ecr-nodeport-service
   labels:
+    name: kubeapp-ecr-deploy
     app: kubeapp-ecr
 spec:
   type: NodePort
@@ -11,5 +12,5 @@ spec:
     app: kubeapp-ecr
   ports:
     - protocol: TCP
-      port: 80
+      port: 3000
       nodePort: 30072
