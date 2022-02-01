@@ -157,17 +157,8 @@ jobs:
             echo ${ECRURI}:latest
             echo ${uri}
             sed -e "s|uriimage|$uri|g" .circleci/files/deployment.yml | kubectl apply -f -
-            kubectl get deploy
             kubectl apply -f .circleci/files/ecrserver.yml
-            kubectl get svc
-            kubectl apply -f .circleci/files/ingress.yml
-            kubectl get ingress
-            kubectl get po
-      - run:
-          name: Status
-          command: |
-            kubectl rollout status deployment deploy
-            kubectl get nodes -o wide
+            kubectl get all
 
       - destroy-environment
 

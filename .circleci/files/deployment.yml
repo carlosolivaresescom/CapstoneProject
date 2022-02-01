@@ -18,6 +18,7 @@ spec:
       containers:
         - name: kubeapp-ecr
           image: uriimage
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "128Mi"
@@ -25,7 +26,9 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "1000m"
-          ports:
-            - containerPort: 80
-          command: ["/bin/sh"]
-          args: ["-c", "npm run startlinux"]
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
