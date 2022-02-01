@@ -169,19 +169,18 @@ jobs:
       - run:
           name: Smoke test.
           command: |
-            #yum install -y yum-utils
-            #yum-config-manager \
-            #--add-repo \
-            #https://download.docker.com/linux/centos/docker-ce.repo
-            #sed -i 's/$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-            #yum update
-            #yum install docker-ce docker-ce-cli containerd.io
-            #systemctl start docker
-            #curl -fsSL https://get.docker.com -o get-docker.sh
-            #sh get-docker.sh
-            yum update
-            yum -y install docker 
-            systemctl start docker
+            yum install -y yum-utils \
+            device-mapper-persistent-data \
+            lvm2 
+            # it will setup repo list for you!
+            sudo yum-config-manager \
+            --add-repo \
+            https://download.docker.com/linux/centos/docker-ce.repo
+            # Make sure that you have stable one always
+            sudo yum-config-manager --enable docker-ce-edge
+
+            # And Finally install it
+            sudo yum install docker-ce
             docker --version
             aws eks list-clusters
             cat \<<EOF | tee /etc/yum.repos.d/kubernetes.repo
