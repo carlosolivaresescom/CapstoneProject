@@ -163,42 +163,29 @@ jobs:
 
   test:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Smoke test.
           command: |
-            yum install -y yum-utils \
-            device-mapper-persistent-data \
-            lvm2 
-            # it will setup repo list for you!
-            yum-config-manager \
-            --add-repo \
-            https://download.docker.com/linux/centos/docker-ce.repo
-            # Make sure that you have stable one always
-            sed -i 's/$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
-            yum update
-            yum-config-manager --enable docker-ce-edge
-
-            # And Finally install it
-            yum install docker-ce
-            docker --version
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install \
+                awscli \
+            && rm -rf /var/cache/apk/*
+            apk add --update npm
+            apk add curl
             aws eks list-clusters
-            cat \<<EOF | tee /etc/yum.repos.d/kubernetes.repo
-            [kubernetes]
-            name=Kubernetes
-            baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-            enabled=1
-            gpgcheck=1
-            repo_gpgcheck=1
-            gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-            EOF
-            yum install -y kubectl
+
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            mkdir -p ~/.local/bin/kubectl
+            mv ./kubectl ~/.local/bin/kubectl
+            PATH=$PATH:~/.local/bin/kubectl
             kubectl version --client
-            #export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
-            #echo ${cluster}
-            #aws eks update-kubeconfig --name ${cluster}
 
 workflows:
   default:
