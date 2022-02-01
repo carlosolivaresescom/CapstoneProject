@@ -179,7 +179,6 @@ jobs:
             #systemctl start docker
             #curl -fsSL https://get.docker.com -o get-docker.sh
             #sh get-docker.sh
-            yum-config-manager --enable rhui-REGION-rhel-server-extras
             yum -y install docker 
             systemctl start docker
             docker --version
