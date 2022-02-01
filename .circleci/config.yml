@@ -15,6 +15,19 @@ commands:
             aws cloudformation delete-stack --stack-name capstone-network-${CIRCLE_WORKFLOW_ID:0:7}
 
 jobs:
+  eslint:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: lint
+          command: |
+            cd backend2
+            npm install
+            npx eslint
+            npx eslint app.js
+
   build:
     docker:
       - image: circleci/node:13.8.0
@@ -25,26 +38,9 @@ jobs:
       - run:
           name: Build
           command: |
-            cd backend
+            cd backend2
             npm install
             npm run build
-      - save_cache:
-          paths: [build/node_modules]
-          key: build
-
-  test-backend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: build
-      - run:
-          name: Run build test
-          command: |
-            cd backend
-            npm install
-            npm run test
 
   deploy-ecr-infrastructure:
     docker:
@@ -173,7 +169,7 @@ jobs:
             docker build -t capstoneproject .
             docker images
       - run:
-          name: push to docker hub
+          name: push to docker hub while keeping old image
           command: |
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
             docker pull ${DOCKER_USER}/capstoneproject:latest
@@ -187,11 +183,6 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
-      - run:
-          name: Store old cluster in file
-          command: |
-            echo $(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])") > clusterName.txt
-            cat clusterName.txt
       - run:
           name: Create cluster
           command: |
@@ -211,18 +202,8 @@ jobs:
             kubectl create -f .circleci/files/deployment.yml
             kubectl create -f .circleci/files/ecrserver.yml
             sleep 1m
+            #Manually open port 30072
             kubectl get all
-      - run:
-          name: Add ip to file
-          command: |
-            echo "$(kubectl get services kubeapp-ecr-nodeport-service)" > ip.txt
-            cat ip.txt
-            kubectl get all
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/ip.txt
-            - project/clusterName.txt
       - destroy-environment
 
 workflows:
@@ -247,13 +228,22 @@ workflows:
       #      branches:
       #        only: main
       #    requires: [deploy-infrastructure]
-
+      - eslint:
+          filters:
+            branches:
+              only: main
+      - build:
+          filters:
+            branches:
+              only: main
+          requires: [eslint]
       - upload_docker_image:
           filters:
             branches:
               only: main
+          requires: [build]
       - create-cluster:
           filters:
             branches:
-              only: cluster
+              only: main
           requires: [upload_docker_image]

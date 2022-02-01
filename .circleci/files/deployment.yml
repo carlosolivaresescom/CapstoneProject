@@ -22,6 +22,7 @@ spec:
       containers:
         - name: kubeapp-ecr-container
           image: carlosolivares9/capstoneproject:latest
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "128Mi"
