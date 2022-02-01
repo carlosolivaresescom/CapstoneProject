@@ -140,6 +140,8 @@ jobs:
     machine: true
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Smoke test.
           command: |
@@ -187,9 +189,7 @@ jobs:
             PATH=$PATH:~/.local/bin/kubectl
             kubectl version --client
 
-            apk add docker
-            apk update
-            service docker start
+            docker --version
 
 workflows:
   default:
