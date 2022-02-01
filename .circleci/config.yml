@@ -168,9 +168,10 @@ jobs:
       - run:
           name: Smoke test.
           command: |
-            export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
-            echo ${cluster}
-            aws eks update-kubeconfig --name ${cluster}
+            aws eks list-clusters
+            #export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
+            #echo ${cluster}
+            #aws eks update-kubeconfig --name ${cluster}
 
 workflows:
   default:
