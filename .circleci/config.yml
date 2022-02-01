@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  slack: circleci/slack@4.5.3
 
 commands:
   destroy-cluster:
@@ -163,48 +161,9 @@ jobs:
             fi
       - revert-docker-image
 
-  docker-test:
-    machine: true
-    steps:
-      - checkout
-      - run:
-          name: Smoke test.
-          command: |
-            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-            chmod +x kubectl
-            mkdir -p ~/.local/bin/kubectl
-            mv ./kubectl ~/.local/bin/kubectl
-            PATH=$PATH:~/.local/bin/kubectl
-            kubectl version --client
-
 workflows:
   default:
     jobs:
-      #- deploy-ecr-infrastructure:
-      #    filters:
-      #      branches:
-      #        only: main
-      #- upload-docker:
-      #    filters:
-      #      branches:
-      #        only: main
-      #    requires: [deploy-ecr-infrastructure]
-      #- deploy-infrastructure:
-      #    filters:
-      #      branches:
-      #        only: main
-      #requires: [upload-docker]
-      #- configure-infrastructure:
-      #    filters:
-      #      branches:
-      #        only: main
-      #    requires: [deploy-infrastructure]
-      #- docker-test:
-      #    filters:
-      #      branches:
-      #        only:
-      #          - main
-      #          - createcluster
       - eslint:
           filters:
             branches:
