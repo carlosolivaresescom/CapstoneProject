@@ -171,6 +171,7 @@ jobs:
       - run:
           name: Smoke test.
           command: |
+            apk add docker
             docker images
       - run:
           name: Smoke test.
