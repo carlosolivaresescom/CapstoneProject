@@ -156,7 +156,7 @@ jobs:
             export uri=${ECRURI}:latest
             echo ${ECRURI}:latest
             echo ${uri}
-            sed -e "s/uriimage/$uri/g" .circleci/files/deployment.yml | kubectl apply -f -
+            sed -e "s|uriimage|$uri|g" .circleci/files/deployment.yml | kubectl apply -f -
             kubectl get deploy
             kubectl apply -f .circleci/files/ecrserver.yml
             kubectl get svc
