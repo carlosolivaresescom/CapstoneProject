@@ -3,16 +3,27 @@ orbs:
   slack: circleci/slack@4.5.3
 
 commands:
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+  destroy-cluster:
+    description: Destroy cluster.
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy cluster
           when: on_fail
           command: |
-            echo "Destroying environments ${CIRCLE_WORKFLOW_ID:0:7}"
-            aws cloudformation delete-stack --stack-name capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}
-            aws cloudformation delete-stack --stack-name capstone-network-${CIRCLE_WORKFLOW_ID:0:7}
+            echo "Destroying cluster ${CIRCLE_WORKFLOW_ID:0:7}"
+            eksctl delete --name capstone-${CIRCLE_WORKFLOW_ID:0:7}
+  revert-docker-image:
+    description: Revert docker image.
+    steps:
+      - run:
+          name: Destroy cluster
+          when: on_fail
+          command: |
+            echo "Reverting docker image"
+            docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+            docker pull ${DOCKER_USER}/capstoneproject:old
+            docker tag ${DOCKER_USER}/capstoneproject:old ${DOCKER_USER}/capstoneproject:latest
+            docker push ${DOCKER_USER}/capstoneproject
 
 jobs:
   eslint:
@@ -204,7 +215,28 @@ jobs:
             sleep 1m
             #Manually open port 30072
             kubectl get all
-      - destroy-environment
+      - destroy-cluster
+
+  smoke-test:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Smoke test.
+          command: |
+            #for new cluster change url
+            URL="http://ec2-44-192-83-90.compute-1.amazonaws.com:30072"            
+            echo ${URL} 
+            if curl -s ${URL} | grep "Success"
+            then
+              return 0
+            else
+              return 1
+            fi
+      - revert-docker-image
 
 workflows:
   default:
@@ -231,18 +263,27 @@ workflows:
       - eslint:
           filters:
             branches:
-              only: main
+              only:
+                - main
+                - createcluster
       - build:
           filters:
             branches:
-              only: main
+              - main
+              - createcluster
           requires: [eslint]
       - upload_docker_image:
           filters:
             branches:
-              only: main
+              - main
+              - createcluster
           requires: [build]
       - create-cluster:
+          filters:
+            branches:
+              only: createcluster
+          requires: [upload_docker_image]
+      - smoke-test:
           filters:
             branches:
               only: main
