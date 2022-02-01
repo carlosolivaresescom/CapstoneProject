@@ -152,14 +152,9 @@ jobs:
       - run:
           name: Run kubectl
           command: |
-            export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            export uri=${ECRURI}:latest
-            echo ${ECRURI}:latest
-            echo ${uri}
-            sed -e "s|uriimage|$uri|g" .circleci/files/deployment.yml | kubectl apply -f -
+            kubectl apply -f .circleci/files/deployment.yml
             kubectl apply -f .circleci/files/ecrserver.yml
             kubectl get all
-
       - destroy-environment
 
   test:
@@ -201,12 +196,13 @@ workflows:
       #      branches:
       #        only: main
       #    requires: [deploy-infrastructure]
-      #- create-cluster:
-      #    filters:
-      #      branches:
-      #        only: main
-      #    requires: [upload-docker]
+
       - test:
           filters:
             branches:
               only: main
+      - create-cluster:
+          filters:
+            branches:
+              only: main
+          requires: [test]

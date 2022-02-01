@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: kubeapp-ecr
-          image: uriimage
+          image: carlosolivares9/capstoneproject
           imagePullPolicy: Always
           resources:
             requests:
