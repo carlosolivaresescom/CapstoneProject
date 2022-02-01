@@ -119,6 +119,8 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: store cluster name
           command: |
@@ -128,8 +130,7 @@ jobs:
             export KUBECONFIG=/root/.kube/config
             kubectl get svc --all-namespaces
             kubectl config view
-      - setup_remote_docker:
-          docker_layer_caching: true
+
       - run:
           name: Restart deployment
           command: |
