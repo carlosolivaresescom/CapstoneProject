@@ -120,7 +120,6 @@ jobs:
       - run:
           name: Restart deployment
           command: |
-
             kubectl get all
             kubectl rollout restart deployment.apps/kubeapp-ecr-deploy
             sleep 1m
@@ -198,8 +197,8 @@ workflows:
               only:
                 - main
           requires: [upload_docker_image]
-      #- smoke-test:
-      #    filters:
-      #      branches:
-      #        only: main
-      #    requires: [upload_docker_image]
+      - smoke-test:
+          filters:
+            branches:
+              only: main
+          requires: [upload_docker_image]
