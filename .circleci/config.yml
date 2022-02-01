@@ -173,6 +173,7 @@ jobs:
             chmod +x kubectl
             mkdir -p ~/.local/bin/kubectl
             mv ./kubectl ~/.local/bin/kubectl
+            PATH=$PATH:~/.local/bin/kubectl
             kubectl version --client
 
 workflows:
