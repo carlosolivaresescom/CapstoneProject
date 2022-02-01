@@ -162,17 +162,18 @@ jobs:
       - revert-docker-image
 
   test:
-    - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Smoke test.
-          command: |
-            aws eks list-clusters
-            kubectl version --client
-            #export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
-            #echo ${cluster}
-            #aws eks update-kubeconfig --name ${cluster}
+    docker:
+      - image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: Smoke test.
+            command: |
+              aws eks list-clusters
+              kubectl version --client
+              #export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
+              #echo ${cluster}
+              #aws eks update-kubeconfig --name ${cluster}
 
 workflows:
   default:
