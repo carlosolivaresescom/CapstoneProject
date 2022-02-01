@@ -162,7 +162,8 @@ jobs:
       - revert-docker-image
 
   test:
-    machine: true
+    docker:
+      - image: alpine/k8s:1.15.12
     steps:
       - checkout
       - run:
@@ -172,12 +173,6 @@ jobs:
       - run:
           name: Smoke test.
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            mkdir -p ~/.local/bin/aws
-            ./aws/install -i ~/.local/bin/aws
-            PATH=$PATH:~/.local/bin/aws
-            /usr/local/bin/aws --version
             aws eks list-clusters
 
             curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -185,6 +180,21 @@ jobs:
             mkdir -p ~/.local/bin/kubectl
             mv ./kubectl ~/.local/bin/kubectl
             PATH=$PATH:~/.local/bin/kubectl
+            kubectl version --client
+
+  test2:
+    docker:
+      - image: alpine/k8s:1.15.12
+    steps:
+      - checkout
+      - run:
+          name: Smoke test.
+          command: |
+            docker --version
+      - run:
+          name: Smoke test.
+          command: |
+            aws eks list-clusters
             kubectl version --client
 
 workflows:
