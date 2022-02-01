@@ -187,6 +187,11 @@ jobs:
             PATH=$PATH:~/.local/bin/kubectl
             kubectl version --client
 
+            apk add docker
+            apk update
+            rc-update add docker boot
+            service docker start
+
 workflows:
   default:
     jobs:
