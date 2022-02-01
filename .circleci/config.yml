@@ -179,6 +179,7 @@ jobs:
             #systemctl start docker
             #curl -fsSL https://get.docker.com -o get-docker.sh
             #sh get-docker.sh
+            yum update
             yum -y install docker 
             systemctl start docker
             docker --version
