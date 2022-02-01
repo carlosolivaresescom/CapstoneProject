@@ -190,6 +190,7 @@ jobs:
           command: |
             kubectl create -f .circleci/files/deployment.yml
             kubectl create -f .circleci/files/ecrserver.yml
+            sleep 1m
             kubectl get all
       - run:
           name: Add ip to file
