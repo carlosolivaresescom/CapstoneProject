@@ -137,18 +137,14 @@ jobs:
             kubectl get all
 
   smoke-test:
-    machine: true
+    docker:
+      - image: alpine/k8s:1.15.12
     steps:
       - checkout
       - run:
           name: Smoke test.
           command: |
-            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-            chmod +x kubectl
-            mkdir -p ~/.local/bin/kubectl
-            mv ./kubectl ~/.local/bin/kubectl
-            PATH=$PATH:~/.local/bin/kubectl
-            kubectl version --client
+            apk add docker
             #for new cluster change url
             URL="http://ec2-44-192-83-90.compute-1.amazonaws.com:30072"            
             echo ${URL} 
@@ -203,9 +199,39 @@ jobs:
 workflows:
   default:
     jobs:
-      - test:
+      - eslint:
           filters:
             branches:
               only:
                 - main
                 - createcluster
+      - build:
+          filters:
+            branches:
+              only:
+                - main
+                - createcluster
+          requires: [eslint]
+      - upload_docker_image:
+          filters:
+            branches:
+              only:
+                - main
+                - createcluster
+          requires: [build]
+      - create-cluster:
+          filters:
+            branches:
+              only: createcluster
+          requires: [upload_docker_image]
+      - restart-cluster:
+          filters:
+            branches:
+              only:
+                - main
+          requires: [upload_docker_image]
+      - smoke-test:
+          filters:
+            branches:
+              only: main
+          requires: [restart-cluster]
