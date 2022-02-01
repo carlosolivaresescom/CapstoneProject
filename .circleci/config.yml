@@ -16,7 +16,7 @@ commands:
     description: Revert docker image.
     steps:
       - run:
-          name: Destroy cluster
+          name: Restore old docker image
           when: on_fail
           command: |
             echo "Reverting docker image"
@@ -25,7 +25,7 @@ commands:
             docker tag ${DOCKER_USER}/capstoneproject:old ${DOCKER_USER}/capstoneproject:latest
             docker push ${DOCKER_USER}/capstoneproject
       - run:
-          name: restart cluster
+          name: Restart cluster
           when: on_fail
           command: |
             export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
@@ -157,45 +157,6 @@ jobs:
               exit 1
             fi
       - revert-docker-image
-
-  test:
-    docker:
-      - image: alpine/k8s:1.15.12
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Smoke test.
-          command: |
-            apk add docker
-            docker images
-      - run:
-          name: Smoke test.
-          command: |
-            aws eks list-clusters
-
-            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-            chmod +x kubectl
-            mkdir -p ~/.local/bin/kubectl
-            mv ./kubectl ~/.local/bin/kubectl
-            PATH=$PATH:~/.local/bin/kubectl
-            kubectl version --client
-
-  test2:
-    docker:
-      - image: alpine/k8s:1.15.12
-    steps:
-      - checkout
-      - run:
-          name: Smoke test.
-          command: |
-            docker --version
-      - run:
-          name: Smoke test.
-          command: |
-            aws eks list-clusters
-            kubectl version --client
 
 workflows:
   default:
