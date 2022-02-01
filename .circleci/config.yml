@@ -176,7 +176,8 @@ jobs:
           name: push to docker hub
           command: |
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-            docker push capstoneproject:latest
+            docker tag capstoneproject ${DOCKER_USER}/capstoneproject
+            docker push ${DOCKER_USER}/capstoneproject
 
 workflows:
   default:
