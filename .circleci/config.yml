@@ -53,122 +53,6 @@ jobs:
             npm install
             npm run build
 
-  deploy-ecr-infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Deploy ecr
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/ecr.yml \
-              --tags project=capstone \
-              --stack-name "capstone-ecr-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --region=us-east-1
-
-  upload-docker:
-    docker:
-      - image: docker:18.09-git
-    steps:
-      - checkout
-      - run:
-          name: install dependencies
-          command: |
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-                awscli \
-            && rm -rf /var/cache/apk/*
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Build docker
-          command: |
-            cd backend
-            docker build -t capstoneproject .
-            docker images
-      - run:
-          name: Tag docker image
-          command: |
-            cd backend
-            export ECRURI=$(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-ECR-Uri'].Value" --no-paginate --output text)
-            export registry=${ECRURI%/*}
-            echo ${registry}
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${registry}
-            echo ${ECRURI}:latest
-            docker tag capstoneproject ${ECRURI}:latest
-            docker images
-            docker push ${ECRURI}:latest
-
-  deploy-infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: install tar and gzip
-          command: |
-            yum install -y tar gzip
-      - run:
-          name: Deploy server
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/server.yml \
-              --tags project=capstone \
-              --stack-name "capstone-server-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --region=us-east-1
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            echo $(aws cloudformation list-exports --query "Exports[?Name=='${CIRCLE_WORKFLOW_ID:0:7}-PublicIp'].Value" --no-paginate --output text) >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-      - destroy-environment
-
-  configure-infrastructure:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            ["72:72:47:81:43:60:4c:c2:67:48:78:00:ef:84:b4:31:4d:19:8a:ae"]
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-            apk add --no-cache tar
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-                awscli \
-            && rm -rf /var/cache/apk/*
-      - run:
-          name: Configure server
-          command: |
-            cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
-          environment:
-            ANSIBLE_HOST_KEY_CHECKING: false
-            AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-            AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-      - destroy-environment
-
   upload_docker_image:
     machine: true
     steps:
@@ -214,6 +98,19 @@ jobs:
             kubectl create -f .circleci/files/ecrserver.yml
             sleep 1m
             #Manually open port 30072
+            kubectl get all
+      - destroy-cluster
+
+  restart-cluster:
+    docker:
+      - image: alpine/k8s:1.15.12
+    steps:
+      - checkout
+      - run:
+          name: Restart deployment
+          command: |
+            kubectl restart deployment.apps/kubeapp-ecr-deploy
+            sleep 1m
             kubectl get all
       - destroy-cluster
 
@@ -282,6 +179,12 @@ workflows:
           filters:
             branches:
               only: createcluster
+          requires: [upload_docker_image]
+      - restart-cluster:
+          filters:
+            branches:
+              only:
+                - main
           requires: [upload_docker_image]
       #- smoke-test:
       #    filters:
