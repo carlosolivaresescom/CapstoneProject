@@ -17,6 +17,8 @@ commands:
   revert-docker-image:
     description: Revert docker image.
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Destroy cluster
           when: on_fail
@@ -142,8 +144,6 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Smoke test.
           command: |
