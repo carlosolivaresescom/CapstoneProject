@@ -167,11 +167,11 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
           name: Smoke test.
           command: |
-            apk add docker
-            apk update && apk add --no-cache docker-cli
             docker run hello-world
 
 workflows:
