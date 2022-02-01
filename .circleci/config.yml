@@ -119,8 +119,6 @@ jobs:
       - image: alpine/k8s:1.15.12
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: store cluster name
           command: |
@@ -140,9 +138,12 @@ jobs:
             kubectl get all
 
   smoke-test:
-    machine: true
+    docker:
+      - image: alpine/k8s:1.15.12
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Smoke test.
           command: |
