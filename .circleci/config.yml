@@ -26,6 +26,17 @@ commands:
             docker pull ${DOCKER_USER}/capstoneproject:old
             docker tag ${DOCKER_USER}/capstoneproject:old ${DOCKER_USER}/capstoneproject:latest
             docker push ${DOCKER_USER}/capstoneproject
+      - run:
+          name: restart cluster
+          when: on_fail
+          command: |
+            export cluster=$(aws eks list-clusters | python3 -c "import sys, json; print(json.load(sys.stdin)['clusters'][0])")
+            echo ${cluster}
+            aws eks update-kubeconfig --name ${cluster}
+            export KUBECONFIG=/root/.kube/config
+            kubectl rollout restart deployment.apps/kubeapp-ecr-deploy
+            sleep 1m
+            kubectl get all
 
 jobs:
   eslint:
@@ -126,7 +137,8 @@ jobs:
             kubectl get all
 
   smoke-test:
-    machine: true
+    docker:
+      - image: alpine/k8s:1.15.12
     steps:
       - checkout
       - run:
