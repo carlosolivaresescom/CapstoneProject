@@ -162,6 +162,26 @@ jobs:
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
       - destroy-environment
 
+  upload_docker_image:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: build images
+          command: |
+            cd backend2
+            docker build -t capstoneproject .
+            docker images
+      - run:
+          name: push to docker hub
+          command: |
+            docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+            docker pull ${DOCKER_USER}/capstoneproject:latest
+            docker tag ${DOCKER_USER}/capstoneproject:latest ${DOCKER_USER}/capstoneproject:old
+            docker push ${DOCKER_USER}/capstoneproject:old
+            docker tag capstoneproject ${DOCKER_USER}/capstoneproject:latest
+            docker push ${DOCKER_USER}/capstoneproject
+
   create-cluster:
     docker:
       - image: alpine/k8s:1.15.12
@@ -205,23 +225,6 @@ jobs:
             - project/clusterName.txt
       - destroy-environment
 
-  test:
-    machine: true
-    steps:
-      - checkout
-      - run:
-          name: build images
-          command: |
-            cd backend2
-            docker build -t capstoneproject .
-            docker images
-      - run:
-          name: push to docker hub
-          command: |
-            docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-            docker tag capstoneproject ${DOCKER_USER}/capstoneproject
-            docker push ${DOCKER_USER}/capstoneproject
-
 workflows:
   default:
     jobs:
@@ -245,12 +248,12 @@ workflows:
       #        only: main
       #    requires: [deploy-infrastructure]
 
-      - test:
+      - upload_docker_image:
           filters:
             branches:
               only: main
       - create-cluster:
           filters:
             branches:
-              only: main
+              only: cluster
           requires: [test]
