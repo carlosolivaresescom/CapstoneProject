@@ -147,7 +147,7 @@ jobs:
           command: |
             apk add docker
             #for new cluster change url
-            URL="http://ec2-44-192-83-90.compute-1.amazonaws.com:30072"            
+            URL="http://ec2-3-238-202-90.compute-1.amazonaws.com:30072"            
             echo ${URL} 
             if curl -s ${URL} | grep "Success"
             then
