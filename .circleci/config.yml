@@ -24,8 +24,6 @@ commands:
             echo "Reverting docker image"
             apk add docker
             apk update
-            service docker start
-            service docker status
             docker run hello-world
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
             docker pull ${DOCKER_USER}/capstoneproject:old
