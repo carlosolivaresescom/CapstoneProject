@@ -116,7 +116,7 @@ jobs:
       - run:
           name: Restart deployment
           command: |
-            aws eks update-kubeconfig --name ${cluster}
+            aws eks update-kubeconfig --name $cluster
             export KUBECONFIG=/root/.kube/config
       - run:
           name: Restart deployment
