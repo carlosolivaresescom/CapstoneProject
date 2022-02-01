@@ -177,6 +177,8 @@ jobs:
             --add-repo \
             https://download.docker.com/linux/centos/docker-ce.repo
             # Make sure that you have stable one always
+            sed -i 's/$releasever/7/g' /etc/yum.repos.d/docker-ce.repo
+            yum update
             yum-config-manager --enable docker-ce-edge
 
             # And Finally install it
