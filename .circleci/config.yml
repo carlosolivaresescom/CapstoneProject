@@ -23,7 +23,8 @@ commands:
           command: |
             echo "Reverting docker image"
             apk add docker
-            apk update
+            apk update && apk add --no-cache docker-cli
+            systemctl start docker
             docker run hello-world
             docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
             docker pull ${DOCKER_USER}/capstoneproject:old
