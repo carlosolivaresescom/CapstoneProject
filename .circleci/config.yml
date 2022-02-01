@@ -188,19 +188,20 @@ jobs:
       - run:
           name: Run kubectl
           command: |
-            kubectl apply -f .circleci/files/deployment.yml
-            kubectl apply -f .circleci/files/ecrserver.yml
+            kubectl create -f .circleci/files/deployment.yml
+            kubectl create -f .circleci/files/ecrserver.yml
             kubectl get all
       - run:
           name: Add ip to file
           command: |
             echo "$(kubectl get services kubeapp-ecr-nodeport-service)" > ip.txt
             cat ip.txt
+            kubectl get all
       - persist_to_workspace:
-          root: /tmp
+          root: ~/
           paths:
-            - ip.txt
-            - clusterName.txt
+            - project/ip.txt
+            - project/clusterName.txt
       - destroy-environment
 
   test:
