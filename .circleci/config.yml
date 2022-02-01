@@ -191,7 +191,7 @@ jobs:
             kubectl apply -f .circleci/files/deployment.yml
             kubectl apply -f .circleci/files/ecrserver.yml
             kubectl get all
-       - run:
+      - run:
           name: Add ip to file
           command: |
             echo "$(kubectl get services kubeapp-ecr-nodeport-service)" > ip.txt
