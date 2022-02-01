@@ -167,7 +167,12 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
+          version: 19.03.13
           docker_layer_caching: true
+      - run:
+          name: Smoke test.
+          command: |
+            docker --version
       - run:
           name: Smoke test.
           command: |
@@ -188,8 +193,6 @@ jobs:
             mv ./kubectl ~/.local/bin/kubectl
             PATH=$PATH:~/.local/bin/kubectl
             kubectl version --client
-
-            docker --version
 
 workflows:
   default:
