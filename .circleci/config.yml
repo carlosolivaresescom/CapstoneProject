@@ -256,4 +256,4 @@ workflows:
           filters:
             branches:
               only: cluster
-          requires: [test]
+          requires: [upload_docker_image]
