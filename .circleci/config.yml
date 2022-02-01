@@ -177,8 +177,11 @@ jobs:
             #yum update
             #yum install docker-ce docker-ce-cli containerd.io
             #systemctl start docker
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sh get-docker.sh
+            #curl -fsSL https://get.docker.com -o get-docker.sh
+            #sh get-docker.sh
+            yum-config-manager --enable rhui-REGION-rhel-server-extras
+            yum -y install docker 
+            systemctl start docker
             docker --version
             aws eks list-clusters
             cat \<<EOF | tee /etc/yum.repos.d/kubernetes.repo
