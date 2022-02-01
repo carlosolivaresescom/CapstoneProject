@@ -15,6 +15,6 @@ Resources:
 Outputs:
   ECR:
     Description: A reference to the created ECR
-    Value: !GetAtt ECR.RepositoryUri
+    Value: !GetAtt ECR.Arn
     Export:
       Name: !Sub "${ID}-ECR-Uri"
