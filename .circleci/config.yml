@@ -229,8 +229,9 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Success"
             then
-              
+              echo "url working"
             else
+              echo "url not working"
               exit 1
             fi
       - revert-docker-image
