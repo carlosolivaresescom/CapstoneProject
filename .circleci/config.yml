@@ -162,6 +162,18 @@ jobs:
             fi
       - revert-docker-image
 
+  docker-test:
+    docker:
+      - image: alpine/k8s:1.15.12
+    steps:
+      - checkout
+      - run:
+          name: Smoke test.
+          command: |
+            apk add docker
+            apk update && apk add --no-cache docker-cli
+            docker run hello-world
+
 workflows:
   default:
     jobs:
@@ -184,39 +196,45 @@ workflows:
       #      branches:
       #        only: main
       #    requires: [deploy-infrastructure]
-      - eslint:
+      - docker-test:
           filters:
             branches:
               only:
                 - main
                 - createcluster
-      - build:
-          filters:
-            branches:
-              only:
-                - main
-                - createcluster
-          requires: [eslint]
-      - upload_docker_image:
-          filters:
-            branches:
-              only:
-                - main
-                - createcluster
-          requires: [build]
-      - create-cluster:
-          filters:
-            branches:
-              only: createcluster
-          requires: [upload_docker_image]
-      - restart-cluster:
-          filters:
-            branches:
-              only:
-                - main
-          requires: [upload_docker_image]
-      - smoke-test:
-          filters:
-            branches:
-              only: main
-          requires: [restart-cluster]
+      #- eslint:
+      #    filters:
+      #      branches:
+      #        only:
+      #          - main
+      #          - createcluster
+      #- build:
+      #    filters:
+      #      branches:
+      #        only:
+      #          - main
+      #          - createcluster
+      #    requires: [eslint]
+      #- upload_docker_image:
+      #    filters:
+      #      branches:
+      #        only:
+      #          - main
+      #          - createcluster
+      #    requires: [build]
+      #- create-cluster:
+      #    filters:
+      #      branches:
+      #        only: createcluster
+      #    requires: [upload_docker_image]
+      #- restart-cluster:
+      #    filters:
+      #      branches:
+      #        only:
+      #          - main
+      #    requires: [upload_docker_image]
+      #- smoke-test:
+      #    filters:
+      #      branches:
+      #        only: main
+      #    requires: [restart-cluster]
