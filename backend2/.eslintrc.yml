@@ -5,3 +5,4 @@ env:
 parserOptions:
   ecmaVersion: latest
 rules: {}
+extends: "eslint:recommended"
