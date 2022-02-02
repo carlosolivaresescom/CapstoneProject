@@ -1,8 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 
-const forceEslintFail = require('cors')
-
 const { json, urlencoded } = express
 const app = express()
 
